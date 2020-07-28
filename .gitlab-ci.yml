@@ -1,0 +1,31 @@
+image: miadmin_openjdk14-gradle6.3-openjfx14:latest
+
+stages:
+  - build
+  - test
+#  - deploy
+
+before_script:
+#  - echo `pwd` # debug
+  - echo "$CI_BUILD_NAME, $CI_BUILD_REF_NAME $CI_BUILD_STAGE" # debug
+  - export GRADLE_USER_HOME=`pwd`/.gradle
+
+cache:
+  paths:
+    - .gradle/wrapper
+    - .gradle/caches
+
+build:
+  stage: build
+  script:
+    - gradle build
+  only:
+    - develop
+  artifacts:
+    paths:
+      - components/build/*
+    expire_in: 1 week
+    when: always
+
+after_script:
+  - echo "End CI"

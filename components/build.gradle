@@ -1,0 +1,60 @@
+plugins {
+    id 'checkstyle'
+    id 'jacoco'
+    id 'com.github.spotbugs' version '4.0.0'
+}
+
+group 'de.hhn.it.pp'
+version '1.0-SNAPSHOT'
+
+tasks.withType(JavaCompile) {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
+
+dependencies {
+    // logging with slf4j
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.24'
+    implementation group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.25'
+    // use JUnit 5
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.1.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.1.0'
+
+}
+
+test {
+    useJUnitPlatform()
+}
+
+
+checkstyle {
+    toolVersion = "8.14"
+    configFile = file('../etc/google-checks-2018.xml')
+    showViolations = false
+    checkstyleTest.enabled = false
+}
+
+
+spotbugs {
+    toolVersion = '4.0.0'
+    ignoreFailures = true
+
+}
+
+// Example to configure HTML report
+spotbugsMain {
+    reports {
+        html {
+            enabled = true
+            destination = file("$buildDir/reports/spotbugs/main/spotbugs.html")
+            stylesheet = 'fancy-hist.xsl'
+        }
+    }
+}
+
+
+task myJavadocs(type: Javadoc) {
+    source = sourceSets.main.allJava
+    failOnError = false
+}
